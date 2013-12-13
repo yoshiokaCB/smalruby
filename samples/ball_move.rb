@@ -35,6 +35,5 @@ ball.on(:start) do
 
 end
 
-ball.on(:click) do
-  turn
-end
+# ボールをクリックしたときの動き
+ball.on(:click) { turn }
