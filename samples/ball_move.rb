@@ -20,11 +20,11 @@ wall = 510
 canvas = Canvas.new
 canvas.on(:start) do
   box_fill(left: 0, top: land+10, right: 690, bottom: 480, color: "yellowgreen")
-  box_fill(left: wall+30 , top: 50, right: wall+40, bottom: land+20, color: "burlywood")
+  box_fill(left: wall+20 , top: 50, right: wall+30, bottom: land+20, color: "burlywood")
 end
 
 #ボール設置用のキャンバス準備
-ball = Canvas.new(x: 0, y: land, width: 30, height: 30)
+ball = Canvas.new(x: 0, y: land, width: 22, height: 22)
 ball.on(:start) do
 
   #キャンバスにボールを表示
