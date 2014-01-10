@@ -1,32 +1,43 @@
 require "smalruby"
-Window.width = 690
+# 画面サイズ
+width = 800
 
 # ボールの移動スピード
-ball_speed = 5
+ball_speed = 10
 
 # ボールの跳ねる力
-ball_power = 20
+ball_power = 30
 
 # 重力の力
-gravity_power = 1
+gravity_power = 2
 
 # バウンドの位置
 land = 310
 
-# 壁の位置
-wall = 510
+Window.width = 800
 
-# 境界線
+# 背景
 canvas = Canvas.new
 canvas.on(:start) do
-  box_fill(left: 0, top: land+10, right: 690, bottom: 480, color: "yellowgreen")
-  box_fill(left: wall+20 , top: 50, right: wall+30, bottom: land+20, color: "burlywood")
+  box_fill(left: 0, top: land+10, right: width, bottom: 480, color: "yellowgreen")
 end
 
-#ボール設置用のキャンバス準備
-ball = Canvas.new(x: 0, y: land, width: 22, height: 22)
-ball.on(:start) do
+# 壁
+wall= Canvas.new(x: 780, y: 50, width: 10, height: 280)
+wall.on(:start) do
+  box_fill(left: 0 , top: 0, right: 10, bottom: 280, color: "burlywood")
+end
 
+# ラケット
+racket= Canvas.new(x: 40, y: 200, height: 50, width: 10)
+racket.on(:start) do
+  box_fill(left: 0, top: 0, right: 10, bottom: 50, color: "yellowgreen")
+end
+
+
+#ボール
+ball = Canvas.new(x: 10, y: land, width: 22, height: 22)
+ball.on(:start) do
   #キャンバスにボールを表示
   circle_fill(x: 10, y: 10, r: 10, color: "white")
 
@@ -38,7 +49,6 @@ ball.on(:start) do
 
     #　x軸の移動
     move ball_speed
-    self.x >= wall ? turn : turn_if_reach_wall
 
     #　y軸の移動
     self.y -= posi_y
@@ -50,10 +60,27 @@ ball.on(:start) do
     else
       posi_y -= gravity_power
     end
-
   end
-
 end
 
 # ボールをクリックしたときの動き
 ball.on(:click) { turn }
+
+# ラケットの操作
+racket.on(:key_down, K_UP){racket.y -= 3}
+racket.on(:key_down, K_DOWN){racket.y += 3}
+racket.on(:key_down, K_LEFT){racket.x -= 3}
+racket.on(:key_down, K_RIGHT){racket.x += 3}
+
+# ボールが壁にぶつかったときの動き
+wall.on(:hit, ball) do
+  ball.turn
+end
+
+# ボールとラケットが当たったときの動き
+ball.on(:hit, racket) do                                          
+  turn                                                          
+  self.x += 5
+end 
+
+
