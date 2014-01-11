@@ -14,29 +14,56 @@ gravity_power = 2
 # バウンドの位置
 land = 310
 
+# 得点
+score = 0
+
 Window.width = 800
 
-# 背景
 canvas = Canvas.new
+wall = Canvas.new(x: 780, y: 50, width: 10, height: 280)
+racket = Canvas.new(x: 40, y: 200, height: 80, width: 10)
+ball = Canvas.new(x: 50, y: land, width: 22, height: 22)
+scorebood = Canvas.new
+
+# 背景
 canvas.on(:start) do
   box_fill(left: 0, top: land+10, right: width, bottom: 480, color: "yellowgreen")
 end
 
+# スコアボード
+scorebood.on(:start) do
+  box_fill(left: 0, top: 0, right: 500, bottom: 40, color: "black")
+  draw_font(x: 0, y: 0, string: "得点 0点です。", size: 20)
+end
+
 # 壁
-wall= Canvas.new(x: 780, y: 50, width: 10, height: 280)
 wall.on(:start) do
   box_fill(left: 0 , top: 0, right: 10, bottom: 280, color: "burlywood")
 end
 
 # ラケット
-racket= Canvas.new(x: 40, y: 200, height: 50, width: 10)
 racket.on(:start) do
-  box_fill(left: 0, top: 0, right: 10, bottom: 50, color: "yellowgreen")
+  box_fill(left: 0, top: 0, right: 10, bottom: 80, color: "yellowgreen")
+end
+
+racket.on(:key_down, K_UP) do
+  self.y -= 5
+end
+
+racket.on(:key_down, K_DOWN) do
+  self.y += 5
+end
+
+racket.on(:key_down, K_LEFT) do 
+  racket.x -= 5
+end
+
+racket.on(:key_down, K_RIGHT) do 
+  racket.x += 5
 end
 
 
 #ボール
-ball = Canvas.new(x: 10, y: land, width: 22, height: 22)
 ball.on(:start) do
   #キャンバスにボールを表示
   circle_fill(x: 10, y: 10, r: 10, color: "white")
@@ -46,7 +73,6 @@ ball.on(:start) do
 
   # ボールの動き
   loop do
-
     #　x軸の移動
     move ball_speed
 
@@ -60,17 +86,14 @@ ball.on(:start) do
     else
       posi_y -= gravity_power
     end
+
+    if reach_wall?
+      canvas.draw_font(x: 0, y: 0, string: "画面をクリックして隠れている車を4つ探してね", size: 32)
+      vanish
+      break
+    end
   end
 end
-
-# ボールをクリックしたときの動き
-ball.on(:click) { turn }
-
-# ラケットの操作
-racket.on(:key_down, K_UP){racket.y -= 3}
-racket.on(:key_down, K_DOWN){racket.y += 3}
-racket.on(:key_down, K_LEFT){racket.x -= 3}
-racket.on(:key_down, K_RIGHT){racket.x += 3}
 
 # ボールが壁にぶつかったときの動き
 wall.on(:hit, ball) do
@@ -81,6 +104,11 @@ end
 ball.on(:hit, racket) do                                          
   turn                                                          
   self.x += 5
+  if score == 0
+    score = 1
+  else
+    score += score
+  end
+  scorebood.box_fill(left: 0, top: 0, right: 500, bottom: 40, color: "black")
+  scorebood.draw_font(x: 0, y: 0, string: "得点 #{score}点です。", size: 20)
 end 
-
-
